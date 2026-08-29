@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refresh Opportunity Scoring: A Client-Grouped Validation of Content Decline Prediction — Yashal Hussain</title>
+<meta name="description" content="A research paper on prioritizing content refresh decisions using honestly-validated ML, FlyRank ML Internship capstone.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231D3557'/%3E%3Ctext x='32' y='42' font-family='sans-serif' font-weight='700' font-size='30' fill='%23FAFAF8' text-anchor='middle'%3EY%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --main: #1D3557; --text: #14171C; --bg: #FAFAF8; --accent: #1F7A4D;
+    --muted: #55595F; --border: #E5E4DC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif;
+    line-height: 1.7; font-size: 17px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.3px; }
+  a { color: var(--main); }
+
+  header.top {
+    border-bottom: 1px solid var(--border); padding: 18px 0; position: sticky; top: 0;
+    background: rgba(250,250,248,0.95); backdrop-filter: blur(6px); z-index: 10;
+  }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; }
+  .logo-mark { width: 30px; height: 30px; border-radius: 7px; background: var(--main); color: var(--bg);
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  header.top nav a { font-size: 14px; color: var(--muted); margin-left: 20px; }
+
+  .title-block { padding: 56px 0 32px; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  h1.paper-title { font-size: clamp(26px, 4vw, 36px); line-height: 1.25; margin-bottom: 18px; }
+  .byline { color: var(--muted); font-size: 15px; }
+  .byline a { color: var(--main); }
+
+  .abstract-box {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 26px 28px; margin: 36px 0; font-size: 16px;
+  }
+  .abstract-box h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+    font-family: 'IBM Plex Mono', monospace; color: var(--accent); margin-bottom: 12px; }
+
+  section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  section h2 { font-size: 24px; margin-bottom: 18px; }
+  section h3 { font-size: 17px; margin: 22px 0 8px; color: var(--main); }
+  section p { margin-bottom: 14px; }
+  section ul, section ol { margin: 0 0 14px 22px; }
+  section li { margin-bottom: 8px; }
+  code { font-family: 'IBM Plex Mono', monospace; background: #EEF2F6; padding: 2px 6px;
+    border-radius: 4px; font-size: 0.9em; color: var(--main); }
+
+  .callout {
+    background: #FFF3E0; border-left: 3px solid #B45309; border-radius: 6px;
+    padding: 16px 20px; margin: 18px 0; font-size: 15px;
+  }
+  .callout.good { background: #EAF3EA; border-left-color: var(--accent); }
+  .callout strong { color: var(--text); }
+
+  figure { margin: 24px 0; }
+  figure img { width: 100%; border: 1px solid var(--border); border-radius: 8px; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; text-align: center; }
+
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  th { font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--muted); }
+  td.num { font-family: 'IBM Plex Mono', monospace; }
+
+  .repo-links a { display: inline-block; margin-right: 16px; margin-bottom: 10px;
+    padding: 9px 16px; border: 1px solid var(--main); border-radius: 100px; font-size: 14px; }
+
+  footer { padding: 40px 0 60px; text-align: center; font-size: 14px; color: var(--muted); }
+  footer .credit { margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    section { padding: 30px 0; }
+    header.top nav a { margin-left: 12px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo-mark">YH</span>
+      <span>Yashal Hussain</span>
+    </div>
+    <nav>
+      <a href="https://yashalaf.github.io/" target="_blank" rel="noopener">Portfolio</a>
+      <a href="https://github.com/yashalaf/flyrank-internship" target="_blank" rel="noopener">Repo</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="title-block">
+    <div class="eyebrow">FlyRank ML Internship — Capstone Research Paper</div>
+    <h1 class="paper-title">Refresh Opportunity Scoring: A Client-Grouped, Leakage-Audited Approach to Content Decline Prediction</h1>
+    <div class="byline">Yashal Hussain · MS Data Science, PUCIT · <a href="mailto:yashalhussain053@gmail.com">yashalhussain053@gmail.com</a></div>
+  </div>
+
+  <div class="abstract-box">
+    <h2>Abstract</h2>
+    <p>Content teams managing large catalogs cannot review every page every week, so the question this paper addresses is which pages to prioritize for refresh given roughly 50 review slots. Using a 30,000-row sample of anonymized content performance data across 32 clients, a leakage-audited feature set and a client-grouped validation split, a logistic regression model reaches 0.600 precision@50 against a base rate of 0.511 and a hand-written rule baseline of 0.320 on the identical held-out set. A companion signal audit shows that content staleness, the intuitive basis for most refresh heuristics, predicts decline only over part of its range and reverses at the extreme, which is offered as the concrete reason a simple rule underperforms here. The paper also surfaces an open methodology question about a higher precision figure reported elsewhere on the same dataset, without resolving it, since the validation-design details behind that figure were not available to check directly.</p>
+  </div>
+
+  <section id="intro">
+    <h2>1. Introduction</h2>
+    <p>A content team with thousands of live pages cannot manually review all of them for whether they still serve the reader and the client well. Some pages quietly decline: search visibility slips, traffic drops, and nobody notices until a client asks why. Reviewing content is expensive, an editor's realistic capacity is on the order of fifty pages a week, so the practical question isn't "is this page declining," it's "which fifty pages should get attention first."</p>
+    <p>This paper works through that question end to end: framing it as a task, building and rejecting a hand-written rule with evidence rather than intuition, auditing the dataset's own assumptions, building a leakage-safe model, validating it honestly, and turning the result into a reviewable action queue, not a black box.</p>
+  </section>
+
+  <section id="data">
+    <h2>2. Data</h2>
+    <p>This paper uses the starter/sample release, <code>data/raw/content_refresh_anonymized.csv</code>: 30,000 rows, 32 pseudonymized clients, 44 columns of SEO and engagement metrics per content item. The label, <code>trend_direction</code>, compares each page's trailing 30-day performance against the 30 days before that, an observed outcome, not a rule someone wrote by hand.</p>
+    <div class="callout">
+      <strong>Honest scope note.</strong> The full production warehouse behind this dataset holds roughly 79 million rows. This paper's modeling pipeline was built and validated on the smaller starter release, not the full warehouse. A separate exploration of the warehouse's <code>fact_content_daily_performance</code> table (11.69M rows for one sample month, accessed via a gated Hugging Face connection) surfaced real data-quality findings, duplicate rows for one client on one date, and a documented availability-flag mechanism gating which columns are genuinely measured. Those findings are referenced in the Methodology and Limitations sections below, but the model itself was neither trained nor validated on the warehouse directly.
+    </div>
+    <p><strong>Excluded, and why:</strong> identifiers (<code>content_id</code>, <code>client_id</code>, used only for grouping); <code>trend_direction</code>/<code>trend_pct</code> (these define the label); <code>avg_position</code>, <code>ctr</code>, and every 90-day or last-30-day traffic aggregate (window-overlap leakage risk, detailed in Methodology).</p>
+  </section>
+
+  <section id="methodology">
+    <h2>3. Methodology</h2>
+    <h3>3.1 Task framing</h3>
+    <p>Framed as ranking/scoring built on a binary classification target (<code>is_declining_label</code>), evaluated by precision@50, because the deliverable an editor actually uses is an ordered queue, not a per-page yes/no.</p>
+
+    <h3>3.2 Feature set and leakage audit</h3>
+    <p>The feature set was not assembled by including everything plausible, several of the most obviously useful-looking columns, <code>avg_position</code> and <code>ctr</code> chief among them, were excluded after a measured audit found they carry real window-overlap risk: their <code>_last_30d</code> sub-windows correlated consistently harder with the label than <code>_prev_30d</code> sub-windows of the same metrics, and neither <code>avg_position</code> nor <code>ctr</code> has a safe prev-30d-only version in this dataset. A confession test confirmed the audit process itself works: deliberately re-adding the label-derived <code>trend_pct</code> pushed AUC from an honest 0.642 to 1.000; removing it recovered the honest number.</p>
+
+    <h3>3.3 Baseline</h3>
+    <p>The baseline is a rule a human editor would plausibly write by hand: flag pages that are visible (impressions ≥ 500), stale (90+ days since last update), and poorly ranked (position ≥ 15), then prioritize by impression volume. Not a strawman, a genuinely reasonable first attempt.</p>
+
+    <h3>3.4 Validation design</h3>
+    <p>Split by <code>client_id</code> using a grouped shuffle split, zero client overlap between train and test confirmed by count, not assumed. This choice is evidence-based: an earlier random split on this same task showed 31 overlapping clients between train and test and a 0.093 AUC gap versus a genuinely grouped split, real evidence of client-memorization risk on this dataset.</p>
+  </section>
+
+  <section id="results">
+    <h2>4. Results</h2>
+    <p>Every number below is computed on the identical held-out, client-grouped test set (6,163 rows, 0 client overlap with training).</p>
+
+    <table>
+      <tr><th>Method</th><th>Precision@50</th></tr>
+      <tr><td>Base rate (guessing)</td><td class="num">0.511</td></tr>
+      <tr><td>Dummy (sort by prior impressions)</td><td class="num">0.440</td></tr>
+      <tr><td>Rule baseline (hand-written)</td><td class="num">0.320</td></tr>
+      <tr><td>Random Forest</td><td class="num">0.480</td></tr>
+      <tr><td><strong>Logistic Regression (final)</strong></td><td class="num"><strong>0.600</strong></td></tr>
+    </table>
+
+    <figure>
+      <img src="img/chart1_results.png" alt="Bar chart comparing precision at 50 across base rate, dummy, rule baseline, and logistic regression">
+      <figcaption>Fig. 1 — Precision@50, model vs. baselines, identical held-out split.</figcaption>
+    </figure>
+
+    <p>Two results are worth naming plainly rather than smoothing over. First, the simpler model won: Logistic Regression outperformed Random Forest on this task, reported as found rather than tuned until Random Forest looked better. Second, the hand-written rule baseline, despite being a reasonable first attempt, scored below the base rate, evidence that this problem needs a model precisely because no simple rule captures it.</p>
+
+    <h3>4.1 Split design changes the answer</h3>
+    <p>The same Logistic Regression model, same features, scored under a naive random split (which allows client overlap) reports 0.760 precision@50, a full 0.160 higher than the honestly-validated 0.600.</p>
+    <figure>
+      <img src="img/chart2_split.png" alt="Bar chart comparing precision at 50 under a random split versus a client-grouped split">
+      <figcaption>Fig. 2 — Same model, same data: a random split (31 overlapping clients) versus a genuinely grouped split (0 overlap).</figcaption>
+    </figure>
+    <div class="callout">
+      <strong>An open methodology question, not an accusation.</strong> This project's own reference pipeline report (<code>outputs/model_report.md</code>) claims 0.740 precision@50 on a split it labels "client_holdout," without publishing a client-overlap count. That claimed figure sits suspiciously close to this paper's own leaky random-split number (0.760), and far from the genuinely grouped number (0.600). This paper cannot prove that reference figure was computed on an overlapping split, only that reproducing this exact task under a leaky split produces a very similar-looking number. The honest position is to flag it as worth checking, not to either dismiss it or accept it uncritically.
+    </div>
+
+    <h3>4.2 Why a simple rule fails: the signal audit</h3>
+    <p>A signal audit tested the core assumption behind most refresh heuristics directly: does staleness predict decline?</p>
+    <figure>
+      <img src="img/chart3_staleness.png" alt="Line chart showing decline rate rising then falling across days-since-last-update buckets">
+      <figcaption>Fig. 3 — Decline rate by staleness bucket. The assumption holds in the middle of its range and reverses at the extreme.</figcaption>
+    </figure>
+    <p>Decline rate rises from 51.1% (0-30 days since update) to 61.1% (91-180 days), consistent with "staler pages decline more." But it reverses at 181+ days (47.1%, the lowest of all buckets, n=174, above this audit's own reliability floor). Staleness alone is not a safe universal proxy, which is precisely why the rule baseline in Section 4 underperforms and a model that can weigh many weak, tangled signals together is justified.</p>
+  </section>
+
+  <section id="limitations">
+    <h2>5. Limitations</h2>
+    <ul>
+      <li><strong>Scope.</strong> Validated on the starter release's client mix and time window (30,000 rows, 32 clients), not yet re-checked against the full ~79M-row warehouse or a different season.</li>
+      <li><strong>Blind spots by design.</strong> The model has no access to a page's actual current search ranking or click-through rate, both excluded for measured leakage reasons. This is a real, known gap, not an oversight, and it likely caps how much signal this model can ever capture on this dataset.</li>
+      <li><strong>Precision, not certainty.</strong> 0.600 precision@50 means roughly 3 in 5 of the top 50 picks are genuinely declining on this held-out set; it does not mean any individual pick is certainly right, especially rows whose traffic fields were missing and filled with a sentinel value.</li>
+      <li><strong>Staleness is not a safe universal signal</strong> (Section 4.2); any future rule or feature engineering that leans on it alone should expect the same reversal at the extreme.</li>
+      <li><strong>Decision-support only.</strong> This ranks review priority. It does not diagnose the cause of a decline, and it should never be the sole basis for an irreversible content or personnel decision.</li>
+    </ul>
+  </section>
+
+  <section id="recommendations">
+    <h2>6. Ranked Recommendations</h2>
+    <p>The action playbook scores the same held-out set validated above and adds a plain-language reason and a confidence tier to every row, so an editor sees why a page was flagged, not just a number.</p>
+    <table>
+      <tr><th>Rank</th><th>Score</th><th>Confidence</th><th>Reason</th></tr>
+      <tr><td class="num">1</td><td class="num">0.843</td><td>high</td><td>falls in the 31-90-day freshness bracket</td></tr>
+      <tr><td class="num">2</td><td class="num">0.837</td><td>high</td><td>low prior search visibility</td></tr>
+      <tr><td class="num">3</td><td class="num">0.835</td><td>high</td><td>falls in the 31-90-day freshness bracket</td></tr>
+      <tr><td class="num">4</td><td class="num">0.834</td><td>high</td><td>falls in the 31-90-day freshness bracket</td></tr>
+      <tr><td class="num">5</td><td class="num">0.833</td><td>high</td><td>falls in the 31-90-day freshness bracket</td></tr>
+    </table>
+    <p>Full ranked queue (6,163 rows): <code>work/outputs/action_playbook_queue.csv</code> in the repository.</p>
+    <h3>Guardrails</h3>
+    <ul>
+      <li>No content is edited, unpublished, or deprioritized automatically from this queue, it is a review list, not an action trigger.</li>
+      <li>Never used to evaluate an individual writer's or editor's performance, the label describes the content, not the person who made it.</li>
+      <li>Rows built partly on missing traffic data (a fill-value sentinel, not a real zero) are flagged for extra verification before acting.</li>
+      <li><strong>Retrain triggers:</strong> base rate drifting outside roughly 0.45-0.60, a fresh honest-split precision@50 dropping meaningfully below 0.600, <code>avg_position</code>/<code>ctr</code> becoming leakage-safe available, or a quarterly calendar floor regardless.</li>
+    </ul>
+  </section>
+
+  <section id="reproducibility">
+    <h2>7. Reproducibility</h2>
+    <p>Every number in this paper is computed live in the linked notebooks; re-running them reproduces this paper's tables and figures exactly.</p>
+    <div class="repo-links">
+      <a href="https://github.com/yashalaf/flyrank-internship" target="_blank" rel="noopener">Full repository</a>
+      <a href="https://github.com/yashalaf/flyrank-internship/blob/main/work/notebooks/capstone.ipynb" target="_blank" rel="noopener">Capstone notebook</a>
+      <a href="https://github.com/yashalaf/flyrank-internship/tree/main/work/notebooks" target="_blank" rel="noopener">All ML-02 → ML-10 notebooks</a>
+      <a href="https://github.com/yashalaf/flyrank-internship/blob/main/work/outputs/action_playbook_queue.csv" target="_blank" rel="noopener">Full ranked queue (CSV)</a>
+    </div>
+  </section>
+
+  <section id="acknowledgments" style="border-bottom: none;">
+    <h2>8. Acknowledgments &amp; Data Credit</h2>
+    <p>Built on the FlyRank ML Internship dataset. Learn more at <a href="https://flyrank.ai" target="_blank" rel="noopener">flyrank.ai</a>.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>Yashal Hussain — MS Data Science, PUCIT</div>
+    <div class="credit"><a href="https://yashalaf.github.io/">Portfolio</a> · <a href="https://github.com/yashalaf/flyrank-internship">GitHub</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
