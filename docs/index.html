@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Refresh Opportunity Scoring: A Client-Grouped Validation of Content Decline Prediction — Yashal Hussain</title>
+<title>Refresh Opportunity Scoring: A Client-Grouped Validation of Content Decline Prediction, Yashal Hussain</title>
 <meta name="description" content="A research paper on prioritizing content refresh decisions using honestly-validated ML, FlyRank ML Internship capstone.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231D3557'/%3E%3Ctext x='32' y='42' font-family='sans-serif' font-weight='700' font-size='30' fill='%23FAFAF8' text-anchor='middle'%3EY%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,20 +105,21 @@
 <div class="wrap">
 
   <div class="title-block">
-    <div class="eyebrow">FlyRank ML Internship — Capstone Research Paper</div>
+    <div class="eyebrow">FlyRank ML Internship, Capstone Research Paper</div>
     <h1 class="paper-title">Refresh Opportunity Scoring: A Client-Grouped, Leakage-Audited Approach to Content Decline Prediction</h1>
     <div class="byline">Yashal Hussain · MS Data Science, PUCIT · <a href="mailto:yashalhussain053@gmail.com">yashalhussain053@gmail.com</a></div>
   </div>
 
   <div class="abstract-box">
     <h2>Abstract</h2>
-    <p>Content teams managing large catalogs cannot review every page every week, so the question this paper addresses is which pages to prioritize for refresh given roughly 50 review slots. Using a 30,000-row sample of anonymized content performance data across 32 clients, a leakage-audited feature set and a client-grouped validation split, a logistic regression model reaches 0.600 precision@50 against a base rate of 0.511 and a hand-written rule baseline of 0.320 on the identical held-out set. A companion signal audit shows that content staleness, the intuitive basis for most refresh heuristics, predicts decline only over part of its range and reverses at the extreme, which is offered as the concrete reason a simple rule underperforms here. The paper also surfaces an open methodology question about a higher precision figure reported elsewhere on the same dataset, without resolving it, since the validation-design details behind that figure were not available to check directly.</p>
+    <p>FlyRank's content teams manage large catalogs across many clients and cannot review every page every week, so the question this paper addresses is which pages to prioritize for refresh given roughly 50 review slots. Using a 30,000-row sample of anonymized content performance data across 32 clients, a leakage-audited feature set and a client-grouped validation split, a logistic regression model reaches 0.600 precision@50 against a base rate of 0.511 and a hand-written rule baseline of 0.320 on the identical held-out set. A companion signal audit shows that content staleness, the intuitive basis for most refresh heuristics, predicts decline only over part of its range and reverses at the extreme, which is offered as the concrete reason a simple rule underperforms here. The paper also surfaces an open methodology question about a higher precision figure reported elsewhere on the same dataset, without resolving it, since the validation-design details behind that figure were not available to check directly.</p>
   </div>
 
   <section id="intro">
     <h2>1. Introduction</h2>
-    <p>A content team with thousands of live pages cannot manually review all of them for whether they still serve the reader and the client well. Some pages quietly decline: search visibility slips, traffic drops, and nobody notices until a client asks why. Reviewing content is expensive, an editor's realistic capacity is on the order of fifty pages a week, so the practical question isn't "is this page declining," it's "which fifty pages should get attention first."</p>
-    <p>This paper works through that question end to end: framing it as a task, building and rejecting a hand-written rule with evidence rather than intuition, auditing the dataset's own assumptions, building a leakage-safe model, validating it honestly, and turning the result into a reviewable action queue, not a black box.</p>
+    <p><strong>The FlyRank content problem, in plain terms.</strong> FlyRank works with clients who each publish and maintain large catalogs of live content pages. Across the 32 clients in this study alone, that is 30,000 pages, and it keeps growing. No content team can manually review every page every week to check whether it still ranks well, still gets traffic, and still serves the client. Pages quietly decline: search visibility slips, traffic drops, and often nobody notices until a client asks why performance fell. This is the real, concrete case study behind this paper, not a hypothetical.</p>
+    <p>Reviewing content is expensive. An editor's realistic capacity is on the order of fifty pages a week, so the practical question FlyRank's own workflow needs answered isn't "is this page declining," it's "which fifty pages should get attention first, out of thousands." That framing, a ranking problem with a fixed weekly budget, is what this paper builds and validates a model for.</p>
+    <p>This paper works through that question end to end: framing it as a task, building and rejecting a hand-written rule with evidence rather than intuition, auditing the dataset's own assumptions, building a leakage-safe model, validating it honestly, and turning the result into a reviewable action queue for FlyRank's editors, not a black box.</p>
   </section>
 
   <section id="data">
@@ -160,7 +161,7 @@
 
     <figure>
       <img src="img/chart1_results.png" alt="Bar chart comparing precision at 50 across base rate, dummy, rule baseline, and logistic regression">
-      <figcaption>Fig. 1 — Precision@50, model vs. baselines, identical held-out split.</figcaption>
+      <figcaption>Fig. 1. Precision@50, model vs. baselines, identical held-out split.</figcaption>
     </figure>
 
     <p>Two results are worth naming plainly rather than smoothing over. First, the simpler model won: Logistic Regression outperformed Random Forest on this task, reported as found rather than tuned until Random Forest looked better. Second, the hand-written rule baseline, despite being a reasonable first attempt, scored below the base rate, evidence that this problem needs a model precisely because no simple rule captures it.</p>
@@ -169,7 +170,7 @@
     <p>The same Logistic Regression model, same features, scored under a naive random split (which allows client overlap) reports 0.760 precision@50, a full 0.160 higher than the honestly-validated 0.600.</p>
     <figure>
       <img src="img/chart2_split.png" alt="Bar chart comparing precision at 50 under a random split versus a client-grouped split">
-      <figcaption>Fig. 2 — Same model, same data: a random split (31 overlapping clients) versus a genuinely grouped split (0 overlap).</figcaption>
+      <figcaption>Fig. 2. Same model, same data: a random split (31 overlapping clients) versus a genuinely grouped split (0 overlap).</figcaption>
     </figure>
     <div class="callout">
       <strong>An open methodology question, not an accusation.</strong> This project's own reference pipeline report (<code>outputs/model_report.md</code>) claims 0.740 precision@50 on a split it labels "client_holdout," without publishing a client-overlap count. That claimed figure sits suspiciously close to this paper's own leaky random-split number (0.760), and far from the genuinely grouped number (0.600). This paper cannot prove that reference figure was computed on an overlapping split, only that reproducing this exact task under a leaky split produces a very similar-looking number. The honest position is to flag it as worth checking, not to either dismiss it or accept it uncritically.
@@ -179,7 +180,7 @@
     <p>A signal audit tested the core assumption behind most refresh heuristics directly: does staleness predict decline?</p>
     <figure>
       <img src="img/chart3_staleness.png" alt="Line chart showing decline rate rising then falling across days-since-last-update buckets">
-      <figcaption>Fig. 3 — Decline rate by staleness bucket. The assumption holds in the middle of its range and reverses at the extreme.</figcaption>
+      <figcaption>Fig. 3. Decline rate by staleness bucket. The assumption holds in the middle of its range and reverses at the extreme.</figcaption>
     </figure>
     <p>Decline rate rises from 51.1% (0-30 days since update) to 61.1% (91-180 days), consistent with "staler pages decline more." But it reverses at 181+ days (47.1%, the lowest of all buckets, n=174, above this audit's own reliability floor). Staleness alone is not a safe universal proxy, which is precisely why the rule baseline in Section 4 underperforms and a model that can weigh many weak, tangled signals together is justified.</p>
   </section>
@@ -236,7 +237,7 @@
 
 <footer>
   <div class="wrap">
-    <div>Yashal Hussain — MS Data Science, PUCIT</div>
+    <div>Yashal Hussain, MS Data Science, PUCIT</div>
     <div class="credit"><a href="https://yashalaf.github.io/">Portfolio</a> · <a href="https://github.com/yashalaf/flyrank-internship">GitHub</a></div>
   </div>
 </footer>
